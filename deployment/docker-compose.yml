@@ -1,4 +1,20 @@
 services:
+
+  config-service:
+    build:
+      context: ../config-service
+    container_name: config-service
+    ports:
+      - "8888:8888"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8888/actuator/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
   eureka-service:
     build:
       context: ../eureka-service
@@ -7,4 +23,8 @@ services:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - CONFIG_SERVER_URI=http://config-service:8888
+    depends_on:
+      config-service:
+        condition: service_healthy
     restart: unless-stopped

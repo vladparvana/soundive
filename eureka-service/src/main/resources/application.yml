@@ -1,30 +1,11 @@
-server:
-  port: 8761
-
 spring:
   application:
-    name: eureka-server
+    name: eureka-service
   profiles:
     active: dev
-
-  cache:
-    cache-names: eurekaClients
-    caffeine:
-      spec: maximumSize=500,expireAfterWrite=10m
-
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-  server:
-    enable-self-preservation: true
-    eviction-interval-timer-in-ms: 60000
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
+  config:
+    import: "configserver:"
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI:http://localhost:8888}
+      fail-fast: true
