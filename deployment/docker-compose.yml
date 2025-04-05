@@ -1,8 +1,7 @@
 services:
 
   config-service:
-    build:
-      context: ../config-service
+    image: vladparvana/config-service:latest
     container_name: config-service
     ports:
       - "8888:8888"
@@ -16,8 +15,7 @@ services:
     restart: unless-stopped
 
   eureka-service:
-    build:
-      context: ../eureka-service
+    image: vladparvana/eureka-service:latest
     container_name: eureka-service
     ports:
       - "8761:8761"
@@ -26,5 +24,20 @@ services:
       - CONFIG_SERVER_URI=http://config-service:8888
     depends_on:
       config-service:
+        condition: service_healthy
+    restart: unless-stopped
+
+    gateway-service:
+    image: vladparvana/gateway-service:latest
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - CONFIG_SERVER_URI=http://config-service:8888
+    depends_on:
+      config-service:
+        condition: service_healthy
+      eureka-service:
         condition: service_healthy
     restart: unless-stopped
