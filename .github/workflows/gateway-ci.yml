@@ -1,17 +1,17 @@
-name: Build & Push Eureka Docker Image
+name: Build & Push Gateway Docker Image
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'eureka-service/**'
+      - 'gateway-service/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: eureka-service
+        working-directory: gateway-service
 
     steps:
     - name: Checkout code
@@ -35,7 +35,7 @@ jobs:
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v5
       with:
-        context: ./eureka-service
-        file: ./eureka-service/Dockerfile
+        context: ./gateway-service
+        file: ./gateway-service/Dockerfile
         push: true
-        tags: vladparvana/eureka-service:latest
+        tags: vladparvana/gateway-service:latest
