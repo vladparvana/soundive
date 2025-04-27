@@ -22,12 +22,17 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - CONFIG_SERVER_URI=http://config-service:8888
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8761/actuator/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     depends_on:
       config-service:
         condition: service_healthy
     restart: unless-stopped
 
-    gateway-service:
+  gateway-service:
     image: vladparvana/gateway-service:latest
     container_name: gateway-service
     ports:
@@ -35,9 +40,27 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - CONFIG_SERVER_URI=http://config-service:8888
+      - EUREKA_SERVER_URI=http://eureka-service:8761/eureka
     depends_on:
       config-service:
         condition: service_healthy
       eureka-service:
         condition: service_healthy
     restart: unless-stopped
+  
+  
+  postgres-auth:
+    image: postgres:15
+    container_name: postgres-auth
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: authdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_auth_data:
