@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/welcome_screen.dart';
+import 'auth_guard.dart';
 
 void main() {
   runApp(const SoundiveApp());
@@ -27,7 +27,7 @@ class SoundiveApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const WelcomeScreen(),
+      home: const AuthGuard(),
     );
   }
 }
